@@ -1,0 +1,118 @@
+#include <iostream>
+#include <clocale>
+#include <string>
+#include <set>
+#include <iterator>
+#include <cstdlib>
+ 
+using namespace std;
+
+template <class T>
+class DSet {
+   
+struct Node
+    {
+        T x;
+        Node *next;
+    };
+    Node *start;
+   
+public:
+    DSet () {
+        start = NULL;
+    }
+    
+DSet<T> * add(T x) // добавление // возврат себя чтоб в main собрать паровозики
+    {
+        if( in(x)) // если метод in вернул true, то не добавляем, такой элемент уже есть
+            return this;
+        Node *temp = new Node;
+        temp->x = x;
+        
+        if (start == NULL)
+        {
+            temp->next = NULL;
+            start = temp;
+        }
+     
+        else // добавляем в начало
+        {
+            temp-> next = start;
+            start = temp;
+        }
+        return this;
+    }
+
+    void del(T x) { // удаление
+        if (start == NULL) // проверка на существование очереди
+        {
+            return ;
+        }
+        
+        if (start->x == x){ // удаление первого элемента
+            Node *temp = start;
+            start = start->next;
+            delete temp;
+            return;
+        }
+        
+        for (Node * i = start; i->next !=NULL; i = i->next)
+            
+            if (i->next->x == x)
+            {
+                Node *temp = i;
+                i->next = i->next->next;
+                delete temp;
+                return;
+            }
+        }
+
+    bool in (T x){
+        for (Node * i = start; i !=NULL; i = i->next) // проход по списку
+            if (i->x == x)
+                return true; // нашли
+        return false; // посмотрели список и не нашли
+    }
+    
+    
+    DSet<T> *intersect (DSet<T> *X, DSet<T> *Y) {// создание множеств являющегося пересечанием трех this , X, Y
+        DSet<T> *res = new DSet<T>;
+        for (Node * i = start; i->next !=NULL; i = i->next)
+            if(X->in(i->x) && Y->in(i->x))  // есть ли в множестве Х такой же элемент как в у нас i и у Y
+                res->add(i->x); // добавляем элемент в результат
+        return res;
+    }
+    
+    void print (){
+        for (Node * i = this->start; i !=NULL; i = i->next)
+            cout << i->x << " " ;
+        cout << endl;
+    }
+    
+};
+
+
+int main() {
+
+    cout << "Множество А: " ;
+    DSet<int>*A = new DSet<int>;
+    A->add(1)->add(2)->add(3);
+    A->print();
+    
+    cout << "Множество B: " ;
+    DSet<int>*B = new DSet<int>;
+    B->add(5)->add(2)->add(3);
+    B->print();
+    
+    cout << "Множество C: " ;
+    DSet<int>*C = new DSet<int>;
+    C->add(5)->add(2)->add(4)->add(9)->add(3);
+    C->print();
+    
+    cout << "Пересечение: ";
+    
+    A->intersect(B, C)->print();
+    
+    return 0;
+}
+
